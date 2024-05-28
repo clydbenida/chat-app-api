@@ -4,12 +4,16 @@ import ParticipantRepository from "../repository/ParticipantRepository";
 import { CreateMessageType } from "../types";
 
 class SocketEventsClass {
-  async createMessage(messageObj: CreateMessageType, socket: Socket) {
+  socket: Socket;
+
+  constructor(socket: Socket) {
+    this.socket = socket;
+  }
+
+  createMessage = async (messageObj: CreateMessageType) => {
     try {
-      console.log("messageObj", messageObj);
       const response = await ParticipantRepository.getParticipantId(messageObj.chatSession.chat_session_id, messageObj.currentUser.user_id);
 
-      console.log(response);
       if (response) {
         const newMessage = await MessageRepository.createMessage({
           chat_session_id: messageObj.chatSession.chat_session_id,
@@ -18,7 +22,7 @@ class SocketEventsClass {
           read_status: false,
         })
 
-        socket.to(`chat_session:${messageObj.chatSession.chat_session_id}`).emit("receive-message", newMessage);
+        this.socket.to(`chat_session:${messageObj.chatSession.chat_session_id}`).emit("receive-message", newMessage);
       }
 
     } catch (err) {
@@ -27,8 +31,10 @@ class SocketEventsClass {
     }
   }
 
+  joinSession = async (chat_session_id: number) => {
+    this.socket.join(`chat_session:${chat_session_id.toString()}`);
+  }
 }
 
-const SocketEvents = new SocketEventsClass();
 
-export default SocketEvents;
+export default SocketEventsClass;
