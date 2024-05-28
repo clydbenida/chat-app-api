@@ -22,7 +22,7 @@ class SocketEventsClass {
           read_status: false,
         })
 
-        this.socket.to(`chat_session:${messageObj.chatSession.chat_session_id}`).emit("receive-message", newMessage);
+        this.socket.to(`user:${messageObj.recepient_id}`).emit("receive-message", newMessage);
       }
 
     } catch (err) {
@@ -31,8 +31,9 @@ class SocketEventsClass {
     }
   }
 
-  joinSession = async (chat_session_id: number) => {
-    this.socket.join(`chat_session:${chat_session_id.toString()}`);
+  joinSession = async (user_id: number) => {
+    console.log("User joined: ", user_id)
+    this.socket.join(`user:${user_id.toString()}`);
   }
 }
 

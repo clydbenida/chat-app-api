@@ -14,6 +14,7 @@ export interface CreateMessageType {
   message: string,
   chatSession: ChatSessionType;
   currentUser: UserAttributes;
+  recepient_id?: number;
 }
 
 export interface ChatSessionType extends ChatSessionAttribute {
